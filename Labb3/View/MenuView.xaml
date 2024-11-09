@@ -6,24 +6,27 @@
              xmlns:local="clr-namespace:Labb3.View"
              xmlns:viewModel="clr-namespace:Labb3.ViewModel"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" 
-             d:DataContext="{d:DesignInstance Type=viewModel:MainWindowsViewModel}"
+             
              mc:Ignorable="d"
              
+             
              d:DesignHeight="450" d:DesignWidth="800">
+             
     <Grid>
         <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_Select Question Pack"
                           Icon="{fa:Icon folderOpen}"
                           InputGestureText="Ctrl+O">
-                    <MenuItem Header="{Binding Path=ActivePack.Name}"
-                              InputGestureText="{Binding Path=ActivePack.Difficulty}"/>
+                    <MenuItem Header="{Binding ConfigurationViewModel.CurrentPack.Name}"
+                              InputGestureText="{Binding Path=CurrentPack.Difficulty}"/>
                     
                 </MenuItem>
 
                 <MenuItem Header="_New Question Pack" 
                           Icon="{fa:Icon folderplus}"
-                          InputGestureText="Ctrl+N"/>
+                          InputGestureText="Ctrl+N"
+                          Command="{Binding NewPackCommand}"/>
                 <MenuItem Header="_Remove Question Pack"
                           Icon="{fa:Icon folderminus}"
                           InputGestureText="Ctrl+R"/>
@@ -37,19 +40,26 @@
             <MenuItem Header="_Edit">
 
                 <MenuItem Header="_Add Question"
-                          Icon="{fa:Icon plus}"/>
+                          Icon="{fa:Icon plus}"
+                          InputGestureText="Insert"/>
                 <MenuItem Header="_Remove Question"
-                          Icon="{fa:Icon minus}"/>
+                          Icon="{fa:Icon minus}"
+                          InputGestureText="Delete"/>
                 <MenuItem Header="Pack _Options"
-                          Icon="{fa:Icon list}"/>
+                          Icon="{fa:Icon list}"
+                          InputGestureText="Ctrl+O"/>
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="_Play"
-                          Icon="{fa:Icon play}"/>
+                          Icon="{fa:Icon play}"
+                          InputGestureText="Ctrl+P"/>
                 <MenuItem Header="_Edit"
-                          Icon="{fa:Icon gears}"/>
+                          Icon="{fa:Icon gears}"
+                          InputGestureText="Ctrl+E"/>
+                <Separator/>
                 <MenuItem Header="_FullScreen" 
-                          Icon="{fa:Icon maximize}"/>
+                          Icon="{fa:Icon maximize}"
+                          InputGestureText="Alt+Enter"/>
             </MenuItem>
         </Menu>
     </Grid>

@@ -2,12 +2,80 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Labb3.View"
-             DataContext="{Binding ConfigurationViewModel}"
-             mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" 
+             xmlns:local="clr-namespace:Labb3.View" xmlns:viewmodel="clr-namespace:Labb3.ViewModel"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="10 5 10 10"
+                   Text="{Binding CurrentPack}"
+                   FontWeight="Bold"/>
+        <Button HorizontalAlignment="Right" 
+                VerticalAlignment="Top" 
+                Content="{fa:Icon minus}"
+                Margin="0 5 10 10"
+                Command="{Binding RemoveQuestionCommand}"/>
+        <Button HorizontalAlignment="Right" 
+                VerticalAlignment="Top" 
+                Content="{fa:Icon plus}"
+                Margin="0 5 30 10"
+                Command="{Binding AddQuestionCommand}"/>
+        <Button HorizontalAlignment="Right" 
+                VerticalAlignment="Top" 
+                Content="{fa:Icon list}"
+                Margin="0 5 50 10"
+                Command="{Binding PackOptionsCommand}"/>
+
+        <ListBox Margin="10 25 10 10"
+                 ItemsSource="{Binding Questions}"
+                 SelectedItem="{Binding SelectedQuestion}"
+                 DisplayMemberPath="Text"/>
+        
+        <TextBlock Grid.Column="1"
+                   VerticalAlignment="Top"
+                   Margin="10 25 20 0"
+                   Text="Question:"
+                   FontWeight="Bold"/>
+        <TextBox Margin="10 44 20 280" 
+                 Grid.Column="1"
+                 Text="{Binding SelectedQuestion.Text, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"/>
+        
+        <WrapPanel Orientation="Vertical"
+                   Grid.Column="1"
+                   VerticalAlignment="Bottom"
+                   Margin="10 10 0 60">
             
+            <TextBlock Text="Correct Answer:"
+                       FontWeight="Bold"/>
+            <TextBox Width="370"
+                     Margin="0 0 0 10"
+                     Text="{Binding SelectedQuestion.CorrectAnswer, UpdateSourceTrigger=PropertyChanged}"/>
+            
+            <TextBlock Text="First Incorrect Answer:"
+                       FontWeight="Bold"/>
+            <TextBox Width="370"
+                     Margin="0 0 0 10"
+                     Text="{Binding SelectedQuestion.IncorrectAnswer1, UpdateSourceTrigger=PropertyChanged}"/>
+            
+            <TextBlock Text="Second Incorrect Answer:"
+                       FontWeight="Bold"/>
+            <TextBox Width="370"
+                     Margin="0 0 0 10"
+                     Text="{Binding SelectedQuestion.IncorrectAnswer2, UpdateSourceTrigger=PropertyChanged}"/>
+            
+            <TextBlock Text="Third Incorrect Answer:"
+                       FontWeight="Bold"/>
+            <TextBox Width="370"
+                     Margin="0 0 0 10"
+                     Text="{Binding SelectedQuestion.IncorrectAnswer3, UpdateSourceTrigger=PropertyChanged}"/>
+        </WrapPanel>
     </Grid>
 </UserControl>

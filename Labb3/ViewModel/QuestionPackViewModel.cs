@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Labb3.ViewModel
 {
-    internal class QuestionPackViewModel  : ViewModelBase
+    public class QuestionPackViewModel  : ViewModelBase
     {
         private readonly QuestionPack _model;
         public ObservableCollection<Question> Questions { get; }
@@ -35,10 +35,10 @@ namespace Labb3.ViewModel
         }
         public int TimeLimitInSeconds 
         { 
-            get => _model.TimeLimitInSeconds;
+            get => _model.TimeLimit;
             set
             {
-                _model.TimeLimitInSeconds = value;
+                _model.TimeLimit = value;
                 RaisePropertyChanged();
             } 
         
