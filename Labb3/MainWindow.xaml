@@ -22,10 +22,10 @@
 
         
 
-        <!--<view:MenuView Grid.Row="0"/>
-        <view:PlayerView Grid.Row="1"/>-->
-        <!--<view:ConfigurationView Grid.Row="1"/>-->
-        
+        <view:MenuView Grid.Row="0"/>
+        <!--<view:PlayerView Grid.Row="1"/>-->
+        <view:ConfigurationView Grid.Row="1"/>
+
 
     </Grid>
 </Window>

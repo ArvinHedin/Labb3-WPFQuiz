@@ -15,12 +15,12 @@ namespace Labb3.ViewModel
     {
         private readonly MainWindowsViewModel? mainWindowsViewModel;
 
-        private DispatcherTimer _timer;
+        private DispatcherTimer? _timer;
         private int _remainingTime;
         private double _timerPercentage;
         private bool _isTimerRunning;
-        private QuestionPack _currentPack;
-        private Question _currentQuestion;
+        private QuestionPack? _currentPack;
+        private Question? _currentQuestion;
         private int _currentQuestionIndex;
 
         
@@ -72,6 +72,11 @@ namespace Labb3.ViewModel
             ////timer.Start();
 
             //UpdateButtonCommand = new DelegateCommand(UpdateButton, CanUpdateButton);
+        }
+
+        public PlayerViewModel()
+        {
+
         }
 
         //        private string _testData = "Start Value";

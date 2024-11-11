@@ -21,7 +21,7 @@ namespace Labb3
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowsViewModel();
+            //DataContext = new MainWindowsViewModel();
 
             
 

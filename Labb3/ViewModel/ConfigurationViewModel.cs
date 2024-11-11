@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using Labb3.Command;
 
 
 namespace Labb3.ViewModel
@@ -17,12 +18,12 @@ namespace Labb3.ViewModel
     {
         private readonly MainWindowsViewModel? mainWindowsViewModel;
 
-        private QuestionPack _currentPack;
-        private Question _selectedQuestion;
-        private ObservableCollection<QuestionPack> _questionPacks;
-        private ObservableCollection<Question> _questions;
-        private IDialogService _dialogService;
-       
+        private QuestionPack? _currentPack;
+        private Question? _selectedQuestion;
+        private ObservableCollection<QuestionPack>? _questionPacks;
+        private ObservableCollection<Question>? _questions;
+        private IDialogService? _dialogService;
+
 
         public ConfigurationViewModel(MainWindowsViewModel? mainWindowsViewModel)
         {
@@ -32,6 +33,15 @@ namespace Labb3.ViewModel
         public ConfigurationViewModel()
         {
             QuestionPacks = new ObservableCollection<QuestionPack>();
+            Questions = new ObservableCollection<Question>();
+
+            AddQuestionCommand = new RelayCommand(param => AddQuestion(), param => CurrentPack != null);
+            RemoveQuestionCommand = new RelayCommand(param => RemoveQuestion(), param => SelectedQuestion != null);
+            PackOptionsCommand = new RelayCommand(param => OpenPackOptions(), param => CurrentPack != null);
+            NewPackCommand = new RelayCommand(param => CreateNewPack());
+            RemovePackCommand = new RelayCommand(param => RemovePack(), param => CurrentPack != null);
+
+            LoadQuestionPacks();
         }
 
 

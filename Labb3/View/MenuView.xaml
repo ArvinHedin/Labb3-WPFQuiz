@@ -6,20 +6,20 @@
              xmlns:local="clr-namespace:Labb3.View"
              xmlns:viewModel="clr-namespace:Labb3.ViewModel"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" 
-             
              mc:Ignorable="d"
-             
-             
              d:DesignHeight="450" d:DesignWidth="800">
-             
+
+    <UserControl.DataContext>
+        <viewModel:MainWindowsViewModel/>
+    </UserControl.DataContext>
     <Grid>
         <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_Select Question Pack"
                           Icon="{fa:Icon folderOpen}"
                           InputGestureText="Ctrl+O">
-                    <MenuItem Header="{Binding ConfigurationViewModel.CurrentPack.Name}"
-                              InputGestureText="{Binding Path=CurrentPack.Difficulty}"/>
+                    <MenuItem Header="{Binding CurrentPack.Name}"
+                              InputGestureText="{Binding CurrentPack.Difficulty}"/>
                     
                 </MenuItem>
 
@@ -29,11 +29,13 @@
                           Command="{Binding NewPackCommand}"/>
                 <MenuItem Header="_Remove Question Pack"
                           Icon="{fa:Icon folderminus}"
-                          InputGestureText="Ctrl+R"/>
+                          InputGestureText="Ctrl+R"
+                          Command="{Binding RemovePackCommand}"/>
                 <Separator />
                 <MenuItem Header="E_xit"
                           Icon="{fa:Icon circlexmark}"
-                          InputGestureText="Ctrl+E"/>
+                          InputGestureText="Ctrl+E"
+                          Command="{Binding ExitCommand}"/>
                 
             </MenuItem>
 
@@ -41,25 +43,31 @@
 
                 <MenuItem Header="_Add Question"
                           Icon="{fa:Icon plus}"
-                          InputGestureText="Insert"/>
+                          InputGestureText="Insert"
+                          Command="{Binding AddQuestionCommand}"/>
                 <MenuItem Header="_Remove Question"
                           Icon="{fa:Icon minus}"
-                          InputGestureText="Delete"/>
+                          InputGestureText="Delete"
+                          Command="{Binding RemoveQuestionCommand}"/>
                 <MenuItem Header="Pack _Options"
                           Icon="{fa:Icon list}"
-                          InputGestureText="Ctrl+O"/>
+                          InputGestureText="Ctrl+O"
+                          Command="{Binding PackOptionsCommand}"/>
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="_Play"
                           Icon="{fa:Icon play}"
-                          InputGestureText="Ctrl+P"/>
+                          InputGestureText="Ctrl+P"
+                          Command="{Binding SwitchToPlayerCommand}"/>
                 <MenuItem Header="_Edit"
                           Icon="{fa:Icon gears}"
-                          InputGestureText="Ctrl+E"/>
+                          InputGestureText="Ctrl+E"
+                          Command="{Binding SwitchToConfigurationCommand}"/>
                 <Separator/>
                 <MenuItem Header="_FullScreen" 
                           Icon="{fa:Icon maximize}"
-                          InputGestureText="Alt+Enter"/>
+                          InputGestureText="Alt+Enter"
+                          Command="{Binding ToggleFullScreenCommand}"/>
             </MenuItem>
         </Menu>
     </Grid>
