@@ -1,4 +1,5 @@
-﻿using Labb3.Model;
+﻿using Labb3.Command;
+using Labb3.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,40 @@ namespace Labb3.ViewModel
     public class QuestionPackViewModel  : ViewModelBase
     {
         private readonly QuestionPack _model;
+
+        private ObservableCollection<QuestionPack> _questionPacks;
+        private QuestionPack _currentPack;
+        private readonly IDialogService _dialogService;
+        private CommandContainer _commandContainer;
         public ObservableCollection<Question> Questions { get; }
+        public CommandContainer CommandContainer
+        {
+            get { return _commandContainer; }
+            set
+            {
+                _commandContainer = value;
+                RaisePropertyChanged(nameof(CommandContainer));
+            }
+        }
+        public ObservableCollection<QuestionPack> QuestionPacks
+        {
+            get => _questionPacks;
+            set
+            {
+                _questionPacks = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public QuestionPack CurrentPack
+        {
+            get => _currentPack;
+            set
+            {
+                _currentPack = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string Name 
         {
@@ -41,17 +75,28 @@ namespace Labb3.ViewModel
                 _model.TimeLimit = value;
                 RaisePropertyChanged();
             } 
-        
         }
-
 
         public QuestionPackViewModel(QuestionPack model)
         {
             this._model = model;
             this.Questions = new ObservableCollection<Question>(model.Questions);
+            QuestionPackMessenger.QuestionPackUpdated += OnQuestionPackUpdated;
+        }
+        public QuestionPackViewModel(IDialogService dialogService)
+        {
+            _dialogService = dialogService;
+            QuestionPacks = new ObservableCollection<QuestionPack>();
+            QuestionPackMessenger.QuestionPackUpdated += OnQuestionPackUpdated;
         }
 
-       
+        private void OnQuestionPackUpdated(object sender, UpdatedEventArgs e)
+        {
+            QuestionPacks = e.UpdatedPacks;
+            CurrentPack = e.NewPack;
 
+            RaisePropertyChanged(nameof(QuestionPacks));
+            RaisePropertyChanged(nameof(CurrentPack));
+        }
     }
 }

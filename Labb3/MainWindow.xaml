@@ -6,26 +6,36 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Labb3" 
         xmlns:view="clr-namespace:Labb3.View"
-        
+        xmlns:viewModel="clr-namespace:Labb3.ViewModel" 
         mc:Ignorable="d"
-        
-        Title="MainWindow" Height="450" Width="800">
-
+        Title="MainWindow" Height="450" Width="800"
+        Name="MainWin"
+        WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
-        <KeyBinding Key="Delete"/>
+        <KeyBinding Key="Enter" Modifiers="Alt" 
+                Command="{Binding CommandContainer.ToggleFullScreenCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.SelectPackCommand}"/>
+        <KeyBinding Key="N" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.NewPackCommand}"/>
+        <KeyBinding Key="R" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.RemovePackCommand}"/>
+        <KeyBinding Key="E" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.ExitCommand}"/>
+        <KeyBinding Key="Insert" 
+                Command="{Binding CommandContainer.AddQuestionCommand}"/>
+        <KeyBinding Key="Delete" 
+                Command="{Binding CommandContainer.RemoveQuestionCommand}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.PackOptionsCommand}"/>
+        <KeyBinding Key="D" Modifiers="Ctrl" 
+                Command="{Binding CommandContainer.SwitchToConfigurationCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl"
+                Command="{Binding CommandContainer.SwitchToPlayerCommand}"/>
     </Window.InputBindings>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        
-
-        <view:MenuView Grid.Row="0"/>
-        <!--<view:PlayerView Grid.Row="1"/>-->
-        <view:ConfigurationView Grid.Row="1"/>
-
-
-    </Grid>
+    <DockPanel>
+        <view:MenuView DockPanel.Dock="Top"/>
+        <ContentControl Content="{Binding CurrentView, UpdateSourceTrigger=PropertyChanged}"/>
+    </DockPanel>
 </Window>

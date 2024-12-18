@@ -63,12 +63,13 @@ namespace Labb3.Model
             set
             {
                 _incorrectAnswer3 = value;
-                
+                RaisePropertyChanged();
             }
         }
 
         public List<string> GetAllAnswers()
         {
+            RaisePropertyChanged();
             return new List<string>
         {
             CorrectAnswer,

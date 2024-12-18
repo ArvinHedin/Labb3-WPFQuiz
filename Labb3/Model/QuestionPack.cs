@@ -9,6 +9,12 @@ namespace Labb3.Model
     public enum Difficulty { Easy, Medium, Hard };
     public class QuestionPack
     {
+        public QuestionPack()
+        {
+            Name = string.Empty;
+            Questions = new List<Question>();
+        }
+
         public QuestionPack(string name, Difficulty difficulty = Difficulty.Medium, int timeLimitInSeconds = 30)
         {
             Name = name;

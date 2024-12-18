@@ -24,7 +24,6 @@ namespace Labb3.View
         public MenuView()
         {
             InitializeComponent();
-            
         }
     }
 }

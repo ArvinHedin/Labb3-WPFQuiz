@@ -12,7 +12,6 @@ namespace Labb3
         QuestionPack ShowCreateNewPackDialog();
         
         void ShowPackOptionsDialog(QuestionPack pack);
-        void ShowAddQuestionDialog(QuestionPack pack);
-        void ShowRemoveQuestionDialog(QuestionPack pack);
+        
     }
 }

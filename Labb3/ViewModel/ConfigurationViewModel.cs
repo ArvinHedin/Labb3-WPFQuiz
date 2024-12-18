@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
 using Labb3.Command;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 
 namespace Labb3.ViewModel
@@ -17,31 +19,21 @@ namespace Labb3.ViewModel
     public class ConfigurationViewModel : ViewModelBase
     {
         private readonly MainWindowsViewModel? mainWindowsViewModel;
-
         private QuestionPack? _currentPack;
         private Question? _selectedQuestion;
         private ObservableCollection<QuestionPack>? _questionPacks;
         private ObservableCollection<Question>? _questions;
         private IDialogService? _dialogService;
+        private CommandContainer _commandContainer;
 
-
-        public ConfigurationViewModel(MainWindowsViewModel? mainWindowsViewModel)
+        public CommandContainer CommandContainer
         {
-            this.mainWindowsViewModel = mainWindowsViewModel;
-        }
-
-        public ConfigurationViewModel()
-        {
-            QuestionPacks = new ObservableCollection<QuestionPack>();
-            Questions = new ObservableCollection<Question>();
-
-            AddQuestionCommand = new RelayCommand(param => AddQuestion(), param => CurrentPack != null);
-            RemoveQuestionCommand = new RelayCommand(param => RemoveQuestion(), param => SelectedQuestion != null);
-            PackOptionsCommand = new RelayCommand(param => OpenPackOptions(), param => CurrentPack != null);
-            NewPackCommand = new RelayCommand(param => CreateNewPack());
-            RemovePackCommand = new RelayCommand(param => RemovePack(), param => CurrentPack != null);
-
-            LoadQuestionPacks();
+            get { return _commandContainer; }
+            set
+            {
+                _commandContainer = value;
+                RaisePropertyChanged(nameof(CommandContainer));
+            }
         }
 
 
@@ -88,13 +80,47 @@ namespace Labb3.ViewModel
             }
         }
 
-
         public ICommand AddQuestionCommand { get; }
         public ICommand RemoveQuestionCommand { get; }
         public ICommand PackOptionsCommand { get; }
-        public ICommand NewPackCommand { get; }
-        public ICommand RemovePackCommand { get; }
 
+
+        public ConfigurationViewModel(MainWindowsViewModel? mainWindowsViewModel)
+        {
+            this.mainWindowsViewModel = mainWindowsViewModel;
+        }
+
+        public ConfigurationViewModel(IDialogService dialogService)
+        {
+            _dialogService = dialogService;
+            QuestionPacks = new ObservableCollection<QuestionPack>();
+            Questions = new ObservableCollection<Question>();
+            CurrentPack = new QuestionPack("New Pack");
+
+            AddQuestionCommand = new RelayCommand(param => AddQuestion(), param => CurrentPack != null);
+            RemoveQuestionCommand = new RelayCommand(param => RemoveQuestion(), param => SelectedQuestion != null);
+            PackOptionsCommand = new RelayCommand(param => OpenPackOptions(), param => CurrentPack != null);
+
+            QuestionPackMessenger.QuestionPackUpdated += OnQuestionPackUpdated;
+
+            LoadQuestionPacks();
+        }
+       
+        private void OnQuestionPackUpdated(object sender, UpdatedEventArgs e)
+        {
+            QuestionPacks = e.UpdatedPacks;
+            CurrentPack = e.NewPack;
+
+            LoadQuestions();
+            if (Questions != null && Questions.Any())
+            {
+                SelectedQuestion = Questions.First();
+            }
+            
+            RaisePropertyChanged(nameof(QuestionPacks));
+            RaisePropertyChanged(nameof(CurrentPack));
+        }
+       
         private void LoadQuestionPacks()
         {
             try
@@ -119,7 +145,7 @@ namespace Labb3.ViewModel
             }
             catch (Exception ex)
             {
-                // Handle loading errors
+
                 MessageBox.Show($"Error loading question packs: {ex.Message}");
             }
         }
@@ -132,13 +158,17 @@ namespace Labb3.ViewModel
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "QuizConfigurator");
 
+                if (!Directory.Exists(appDataPath))
+                {
+                    Directory.CreateDirectory(appDataPath);
+                }
+
                 string filePath = Path.Combine(appDataPath, "questionpacks.json");
                 string json = JsonSerializer.Serialize(QuestionPacks.ToList());
                 File.WriteAllText(filePath, json);
             }
             catch (Exception ex)
             {
-                // Handle saving errors
                 MessageBox.Show($"Error saving question packs: {ex.Message}");
             }
         }
@@ -148,10 +178,16 @@ namespace Labb3.ViewModel
             if (CurrentPack != null)
             {
                 Questions = new ObservableCollection<Question>(CurrentPack.Questions);
+                Questions.CollectionChanged += Questions_CollectionChanged;
+
+                foreach (var question in Questions)
+                {
+                    question.PropertyChanged += Question_PropertyChanged;
+                }
             }
             else
             {
-                Questions.Clear();
+                Questions?.Clear();
             }
         }
 
@@ -162,7 +198,9 @@ namespace Labb3.ViewModel
                 Text = "New Question"
             };
             Questions.Add(newQuestion);
+            CurrentPack.Questions = Questions.ToList();
             SelectedQuestion = newQuestion;
+            SaveQuestionPacks();
         }
 
         private void RemoveQuestion()
@@ -183,54 +221,75 @@ namespace Labb3.ViewModel
                 }
             }
         }
-
-        private void OpenPackOptions()
+        public void RemoveSelectedQuestion()
         {
-            //var dialog = _dialogService.ShowPackOptionsDialog(_currentPack);
-            //if (dialog.ShowDialog() == true)
-            //{
-            //    // Pack properties are updated in the dialog
-            //    RaisePropertyChanged(nameof(CurrentPack));
-            //    SaveQuestionPacks();
-            //}
-        }
-
-        private void CreateNewPack()
-        {
-            //var dialog = new CreateNewPackDialog();
-            //if (dialog.ShowDialog() == true)
-            //{
-            //    var newPack = new QuestionPack
-            //    {
-            //        Name = dialog.PackName,
-            //        Difficulty = dialog.Difficulty,
-            //        TimeLimit = dialog.TimeLimit,
-            //        Questions = new List<Question>()
-            //    };
-
-            //    QuestionPacks.Add(newPack);
-            //    CurrentPack = newPack;
-            //    SaveQuestionPacks();
-            //}
-        }
-
-        private void RemovePack()
-        {
-            if (CurrentPack != null)
+            if (SelectedQuestion != null)
             {
                 var result = MessageBox.Show(
-                    $"Are you sure you want to remove the pack '{CurrentPack.Name}'?",
+                    "Are you sure you want to remove this question?",
                     "Confirm Remove",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    QuestionPacks.Remove(CurrentPack);
-                    CurrentPack = null;
+                    Questions.Remove(SelectedQuestion);
+                    CurrentPack.Questions = Questions.ToList();
+
+                    if (Questions.Any())
+                    {
+                        SelectedQuestion = Questions.First();
+                    }
+
                     SaveQuestionPacks();
                 }
             }
+        }
+
+        private void OpenPackOptions()
+        {
+            if (CurrentPack != null)
+            {
+                _dialogService.ShowPackOptionsDialog(CurrentPack);
+                SaveQuestionPacks();
+                RaisePropertyChanged(nameof(CurrentPack));
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Please select a question pack first.",
+                    "No Pack Selected",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+        private void Questions_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Question question in e.NewItems)
+                {
+                    question.PropertyChanged += Question_PropertyChanged;
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (Question question in e.OldItems)
+                {
+                    question.PropertyChanged -= Question_PropertyChanged;
+                }
+            }
+
+            if (CurrentPack != null)
+            {
+                CurrentPack.Questions = Questions.ToList();
+                SaveQuestionPacks();
+            }
+        }
+
+        private void Question_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            SaveQuestionPacks();
         }
     }
 }

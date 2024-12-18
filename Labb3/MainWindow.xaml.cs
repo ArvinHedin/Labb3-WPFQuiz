@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Labb3.Command;
 
 namespace Labb3
 {
@@ -21,10 +22,11 @@ namespace Labb3
         public MainWindow()
         {
             InitializeComponent();
-            //DataContext = new MainWindowsViewModel();
 
-            
+            var dialogService = new DialogService();
+            var commandContainer = new CommandContainer(dialogService);
 
+            DataContext = new MainWindowsViewModel(dialogService, commandContainer);
         }
     }
 }

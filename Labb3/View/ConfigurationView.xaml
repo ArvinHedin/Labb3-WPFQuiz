@@ -4,12 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" 
-             xmlns:local="clr-namespace:Labb3.View" xmlns:viewmodel="clr-namespace:Labb3.ViewModel" 
-             
+             xmlns:local="clr-namespace:Labb3.View" 
+             xmlns:viewmodel="clr-namespace:Labb3.ViewModel" 
              Height="400" Width="800">
-    <UserControl.DataContext>
-        <viewmodel:ConfigurationViewModel/>
-    </UserControl.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -18,27 +16,27 @@
         <TextBlock HorizontalAlignment="Left"
                    VerticalAlignment="Top"
                    Margin="10 5 10 10"
-                   Text="{Binding CurrentPack}"
+                   Text="{Binding CommandContainer.ConfigurationViewModel.CurrentPack.Name}"
                    FontWeight="Bold"/>
         <Button HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
                 Content="{fa:Icon minus}"
                 Margin="0 5 10 10"
-                Command="{Binding RemoveQuestionCommand}"/>
+                Command="{Binding CommandContainer.RemoveQuestionCommand}"/>
         <Button HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
                 Content="{fa:Icon plus}"
                 Margin="0 5 30 10"
-                Command="{Binding AddQuestionCommand}"/>
+                Command="{Binding CommandContainer.AddQuestionCommand}"/>
         <Button HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
                 Content="{fa:Icon list}"
                 Margin="0 5 50 10"
-                Command="{Binding PackOptionsCommand}"/>
+                Command="{Binding CommandContainer.PackOptionsCommand}"/>
 
-        <ListBox Margin="10 25 10 10"
-                 ItemsSource="{Binding Questions}"
-                 SelectedItem="{Binding SelectedQuestion}"
+        <ListBox ItemsSource="{Binding CommandContainer.ConfigurationViewModel.Questions}"
+                 SelectedItem="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion}"
+                 Margin="10 25 10 10"
                  DisplayMemberPath="Text"/>
         
         <TextBlock Grid.Column="1"
@@ -48,7 +46,7 @@
                    FontWeight="Bold"/>
         <TextBox Margin="10 44 20 280" 
                  Grid.Column="1"
-                 Text="{Binding SelectedQuestion.Text, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion.Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"/>
         
@@ -61,25 +59,25 @@
                        FontWeight="Bold"/>
             <TextBox Width="370"
                      Margin="0 0 0 10"
-                     Text="{Binding SelectedQuestion.CorrectAnswer, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion.CorrectAnswer, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             
             <TextBlock Text="First Incorrect Answer:"
                        FontWeight="Bold"/>
             <TextBox Width="370"
                      Margin="0 0 0 10"
-                     Text="{Binding SelectedQuestion.IncorrectAnswer1, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion.IncorrectAnswer1, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             
             <TextBlock Text="Second Incorrect Answer:"
                        FontWeight="Bold"/>
             <TextBox Width="370"
                      Margin="0 0 0 10"
-                     Text="{Binding SelectedQuestion.IncorrectAnswer2, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion.IncorrectAnswer2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
             
             <TextBlock Text="Third Incorrect Answer:"
                        FontWeight="Bold"/>
             <TextBox Width="370"
                      Margin="0 0 0 10"
-                     Text="{Binding SelectedQuestion.IncorrectAnswer3, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding CommandContainer.ConfigurationViewModel.SelectedQuestion.IncorrectAnswer3, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </WrapPanel>
     </Grid>
 </UserControl>

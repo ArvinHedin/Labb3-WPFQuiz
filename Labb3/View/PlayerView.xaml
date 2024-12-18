@@ -3,88 +3,241 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp" 
-             xmlns:local="clr-namespace:Labb3.View" xmlns:viewModel="clr-namespace:Labb3.ViewModel"
-             
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <viewModel:ViewModelBase/>
-    </UserControl.DataContext>
+             xmlns:local="clr-namespace:Labb3.View"
+             xmlns:converters="clr-namespace:Labb3.Converters"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+              DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.CommandContainer.PlayerViewModel}"
+             mc:Ignorable="d"
+             Height="400" Width="800">
+
+
+    <UserControl.Resources>
+        <converters:FeedbackVisibilityConverter x:Key="FeedbackVisibilityConverter"/>
+        <converters:WrongAnswerVisibilityConverter x:Key="WrongAnswerVisibilityConverter"/>
+    </UserControl.Resources>
+
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    Margin="10">
+            <TextBlock Text="{Binding CurrentPack.Name}" 
+                       FontWeight="Bold" 
+                       FontSize="18"/>
+            <TextBlock Text=" - Time Remaining: " 
+                       FontSize="18"/>
+            <TextBlock Text="{Binding TimerDisplay}" 
+                       FontSize="18" 
+                       FontWeight="Bold"/>
+        </StackPanel>
+
+
+        <Grid Grid.Row="1" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Timer Display -->
-            <Grid Grid.Row="0" Margin="20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <!-- Circular Progress Bar -->
-                <Canvas Grid.Column="1" Width="100" Height="100">
-                   
-                    <!-- Timer Text -->
-                    <TextBlock Text="{Binding TimerDisplay}"
-                           FontSize="24" FontWeight="Bold"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Top"
-                           Canvas.Left="35"
-                           Canvas.Top="35"/>
-                </Canvas>
-            </Grid>
-            <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-       
-        <Button VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Margin="10"
-                Width="100"
-                Height="60"
-                Content="hello"/>
-        <Button Grid.Column="1"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Left"
-                Margin="10"
-                Width="100"
-                Height="60"
-                Content="hello"/>
-        <Button Grid.Row="1"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Right"
-                Margin="10"
-                Width="100"
-                Height="60"
-                Content="hello"/>
-        <Button Grid.Row="1"
-                Grid.Column="1"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="10"
-                Width="100"
-                Height="60"
-                Content="hello"/>
-        <TextBlock Grid.Column="1"
-                   VerticalAlignment="Top"
-                   HorizontalAlignment="Right"
-                   Margin="10"
-                   Text="Timer"
-                   FontSize="30"/>-->
+            <TextBlock Grid.Row="0" 
+                       Text="{Binding CurrentQuestion.Text}"
+                       TextWrapping="Wrap"
+                       FontSize="20"
+                       Margin="0 0 0 20"/>
 
 
+            <UniformGrid Grid.Row="1" Rows="2" Columns="2">
+
+                <Grid Margin="5">
+                    <Button Command="{Binding AnswerCommand}"
+                            CommandParameter="0">
+                        <Grid>
+                            <TextBlock Text="{Binding RandomizedAnswers[0]}" 
+                                     TextWrapping="Wrap"
+                                     Margin="25 5 5 5"/>
+
+                            <fa:IconBlock Icon="Check"
+                                          Foreground="Green"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Top"
+                                          Margin="5 5 0 0"
+                                          FontSize="18"
+                                          FontWeight="Bold">
+                                <fa:IconBlock.Visibility>
+
+                                    <MultiBinding Converter="{StaticResource FeedbackVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="0"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                            <fa:IconBlock Icon="Xmark"
+                                        Foreground="Red"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"
+                                        FontWeight="Bold">
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource WrongAnswerVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="0"/>
+                                    </MultiBinding>
+
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+
+
+                <Grid Margin="5">
+                    <Button Command="{Binding AnswerCommand}"
+                            CommandParameter="1">
+                        <Grid>
+                            <TextBlock Text="{Binding RandomizedAnswers[1]}" 
+                                     TextWrapping="Wrap"
+                                     Margin="25 5 5 5"/>
+                            <fa:IconBlock Icon="Check"
+                                        Foreground="Green"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"
+                                        FontWeight="Bold">      
+
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource FeedbackVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="1"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                            <fa:IconBlock Icon="Xmark"
+                                        Foreground="Red"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"
+                                        FontWeight="Bold">          
+
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource WrongAnswerVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="1"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+
+
+                <Grid Margin="5">
+                    <Button Command="{Binding AnswerCommand}"
+                            CommandParameter="2">
+                        <Grid>
+                            <TextBlock Text="{Binding RandomizedAnswers[2]}" 
+                                     TextWrapping="Wrap"
+                                     Margin="25 5 5 5"/>
+                            <fa:IconBlock Icon="Check"
+                                        Foreground="Green"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"
+                                        FontWeight="Bold">  
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource FeedbackVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="2"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                            <fa:IconBlock Icon="Xmark"
+                                        Foreground="Red"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"
+                                        FontWeight="Bold">      
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource WrongAnswerVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="2"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+
+
+                <Grid Margin="5">
+                    <Button Command="{Binding AnswerCommand}"
+                            CommandParameter="3">
+                        <Grid>
+                            <TextBlock Text="{Binding RandomizedAnswers[3]}" 
+                                     TextWrapping="Wrap"
+                                     Margin="25 5 5 5"/>
+                            <fa:IconBlock Icon="Check"
+                                        Foreground="Green"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"   
+                                        FontWeight="Bold">
+
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource FeedbackVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="3"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+
+                            </fa:IconBlock>
+                            <fa:IconBlock Icon="Xmark"
+                                        Foreground="Red"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="5 5 0 0"
+                                        FontSize="18"     
+                                        FontWeight="Bold">  
+
+                                <fa:IconBlock.Visibility>
+                                    <MultiBinding Converter="{StaticResource WrongAnswerVisibilityConverter}">
+                                        <Binding Path="ShowAnswerFeedback"/>
+                                        <Binding Path="CorrectAnswerIndex"/>
+                                        <Binding Source="3"/>
+                                    </MultiBinding>
+                                </fa:IconBlock.Visibility>
+                            </fa:IconBlock>
+                        </Grid>
+                    </Button>
+                </Grid>
+            </UniformGrid>
+        </Grid>
+
+
+        <ProgressBar Grid.Row="2" 
+                     Height="20" 
+                     Value="{Binding TimerPercentage}"
+                     Maximum="100"
+                     Margin="10"/>
 
     </Grid>
 </UserControl>
